@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Property Location Finder</title>
+  <title>KHB-Suryanagara 4th Phase Properties</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght=400;500;600;700&family=DM+Sans:wght=300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght=400;500;600;700&family=DM+Sans:wght=300;400;500;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
@@ -47,9 +47,9 @@
     }
     .logo {
       font-family: 'Rajdhani', sans-serif;
-      font-size: 1.4rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       color: var(--accent);
       text-transform: uppercase;
     }
@@ -83,6 +83,31 @@
     .sidebar-section {
       padding: 20px;
       border-bottom: 1px solid var(--border);
+    }
+
+    /* ── BRAND LOGO CONTAINER ── */
+    .brand-container {
+      text-align: center;
+      padding: 16px 10px;
+      background: var(--surface2);
+      border-radius: 8px;
+      margin-bottom: 5px;
+      border: 1px solid var(--border);
+    }
+    .brand-logo {
+      max-width: 85px;
+      height: auto;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    .brand-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text);
+      line-height: 1.3;
+      text-transform: uppercase;
     }
 
     .section-title {
@@ -151,13 +176,6 @@
     }
     .btn-primary { background: var(--accent); color: #000; }
     .btn-primary:hover { background: #d97706; transform: translateY(-1px); }
-    .btn-secondary {
-      background: transparent;
-      color: var(--accent2);
-      border: 1px solid var(--accent2);
-      margin-top: 10px;
-    }
-    .btn-secondary:hover { background: rgba(59,130,246,0.1); }
     .btn-outline {
       background: transparent;
       color: var(--muted);
@@ -194,6 +212,33 @@
     .result-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
     .result-value { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--text); }
     .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+
+    /* ── CORPORATE OFFICE FOOTER BLOCK ── */
+    .corporate-footer {
+      padding: 20px;
+      background: rgba(10, 14, 23, 0.4);
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .footer-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .footer-text {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .footer-link {
+      color: var(--accent2);
+      text-decoration: none;
+      font-weight: 500;
+    }
 
     .stats-bar { display: flex; gap: 4px; flex-wrap: wrap; }
     .stat-chip {
@@ -249,7 +294,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Custom Leaflet Dark Mode Layers & Text Fixes */
     .leaflet-layer, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
       filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
     }
@@ -261,35 +305,49 @@
       .sidebar { width: 100%; min-width: unset; height: auto; max-height: 55vh; }
       #map { height: 45vh; }
     }
-    .filter-row { display: flex; gap: 8px; }
-    .filter-row select { flex: 1; }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Property<span>Map</span></div>
-  <span class="header-badge">PARVA PLANNING</span>
+  <div class="logo">KHB-<span>Suryanagara 4th Phase Properties</span></div>
+  <span class="header-badge">LIVE DATABASE</span>
 </header>
 
 <div class="app-container">
   <div class="sidebar">
     <div class="sidebar-section">
-      <div class="section-title">Database Status</div>
+      <div class="brand-container">
+        <img src="parva-logo.png" alt="Parva Logo" class="brand-logo" onerror="this.style.display='none';">
+        <div class="brand-name">Parva Planning & Infrastructure</div>
+      </div>
       <div class="file-loaded" id="dataStatus">
         <div class="dot"></div>
-        <span id="statusText">Connecting to property database...</span>
+        <span id="statusText">Connecting to database...</span>
       </div>
     </div>
 
     <div class="sidebar-section">
-      <div class="section-title">Search Property</div>
+      <div class="section-title">Property Search</div>
+      
       <div class="form-group">
-        <label>Property Number</label>
-        <input type="text" id="propInput" placeholder="e.g. 1" autocomplete="off"/>
+        <label>Sector <span style="color:var(--danger)">*</span></label>
+        <select id="sectorFilter">
+          <option value="">— Select Sector (Required) —</option>
+          <option>Sector-1</option>
+          <option>Sector-2</option>
+          <option>Sector-3</option>
+          <option>Sector-4</option>
+          <option>Sector-5</option>
+          <option>Sector-6</option>
+          <option>Sector-7</option>
+          <option>Sector-8</option>
+          <option>Sector-9</option>
+        </select>
       </div>
+
       <div class="form-group">
-        <label>Category</label>
+        <label>Category <span style="color:var(--danger)">*</span></label>
         <select id="catSelect">
           <option value="">— Select Category —</option>
           <option>EWS</option>
@@ -306,21 +364,13 @@
           <option>GROUP HOUSING</option>
         </select>
       </div>
-      <div class="form-group filter-row">
-        <div style="flex:1">
-          <label>Sector (optional)</label>
-          <select id="sectorFilter">
-            <option value="">All Sectors</option>
-            <option>Sector-1</option><option>Sector-2</option>
-            <option>Sector-3</option><option>Sector-4</option>
-            <option>Sector-5</option><option>Sector-6</option>
-            <option>Sector-7</option><option>Sector-8</option>
-            <option>Sector-9</option>
-          </select>
-        </div>
+
+      <div class="form-group">
+        <label>Property Number <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="propInput" placeholder="e.g. 1" autocomplete="off"/>
       </div>
+
       <button class="btn btn-primary" onclick="findProperty()">📍 Find My Property</button>
-      <button class="btn btn-secondary" onclick="showAll()">🗺️ Show All Properties</button>
       <button class="btn btn-outline" onclick="clearMap()">✕ Clear Map</button>
 
       <div id="resultCard">
@@ -342,7 +392,7 @@
             <div class="result-value" id="r_coords" style="font-size:0.82rem">—</div>
           </div>
         </div>
-        <a id="r_nav_btn" href="#" target="_blank" class="btn btn-primary btn-nav" style="display:none;">🧭 Open in Google Maps</a>
+        <a id="r_nav_btn" href="#" target="_blank" class="btn btn-primary btn-nav" style="display:none;">com.google.android.apps.maps Navigation</a>
       </div>
     </div>
 
@@ -354,6 +404,16 @@
     <div class="sidebar-section">
       <div class="section-title">Category Legend</div>
       <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="corporate-footer">
+      <div class="footer-title">Corporate Office</div>
+      <div class="footer-text">
+        <strong>Parva Planning and Infrastructure</strong><br/>
+        Layout Design & Property Planning Services<br/>
+        Karnataka, India<br/>
+        <span style="display:inline-block; margin-top:5px;">📞 Contact Support for Layout Services</span>
+      </div>
     </div>
   </div>
 
@@ -435,7 +495,6 @@ async function autoLoadDatabase() {
   }
 }
 
-// Simplified clean parsing loop reading regular decimal values directly from your updated CSV
 function parseCoordinate(coordStr) {
   if (!coordStr) return NaN;
   const cleaned = coordStr.trim().replace(/"/g, '');
@@ -536,7 +595,6 @@ function addMarker(row, highlight = false) {
       ${highlight ? '<circle cx="16" cy="16" r="4" fill="' + color + '"/>' : ''}
     </svg>`;
 
-  // External Google Maps navigation deep-link generator string
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${row.lat},${row.lng}`;
 
   const customIcon = L.divIcon({
@@ -558,7 +616,7 @@ function addMarker(row, highlight = false) {
       </div>
       ${row.sector ? `<div style="font-size:0.78rem; color:#6b7280">${row.sector}</div>` : ''}
       <div style="font-size:0.72rem; color:#9ca3af; margin-top:6px">${row.lat.toFixed(6)}, ${row.lng.toFixed(6)}</div>
-      <a href="${googleMapsUrl}" target="_blank" style="display:block; text-align:center; background:#2563eb; color:#fff; text-decoration:none; font-weight:700; font-size:0.75rem; padding:6px; margin-top:8px; border-radius:4px;">🧭 Open in Google Maps</a>
+      <a href="${googleMapsUrl}" target="_blank" style="display:block; text-align:center; background:#2563eb; color:#fff; text-decoration:none; font-weight:700; font-size:0.75rem; padding:8px; margin-top:8px; border-radius:4px;">🧭 Open in Google Maps</a>
     </div>`;
 
   marker.bindPopup(popupContent);
@@ -573,14 +631,22 @@ function addMarker(row, highlight = false) {
 
 function findProperty() {
   if (csvData.length === 0) { showToast('Database downloading...', 'error'); return; }
-  const propNum = document.getElementById('propInput').value.trim();
-  const cat = document.getElementById('catSelect').value;
+  
   const sector = document.getElementById('sectorFilter').value;
+  const cat = document.getElementById('catSelect').value;
+  const propNum = document.getElementById('propInput').value.trim();
 
-  if (!propNum || !cat) { showToast('Please select both Property No. & Category', 'error'); return; }
+  // Strict compulsory logic verification checks
+  if (!sector) { showToast('Please select a Sector first.', 'error'); return; }
+  if (!cat) { showToast('Please select a Property Category.', 'error'); return; }
+  if (!propNum) { showToast('Please enter a Property Number.', 'error'); return; }
 
-  let match = csvData.find(r => r.prop.toLowerCase() === propNum.toLowerCase() && r.cat === cat);
-  if (match && sector && match.sector !== sector) match = null;
+  // Exact compound matching evaluation lookup
+  let match = csvData.find(r => 
+    r.prop.toLowerCase() === propNum.toLowerCase() && 
+    r.cat.toLowerCase() === cat.toLowerCase() && 
+    r.sector.toLowerCase() === sector.toLowerCase()
+  );
 
   const rc = document.getElementById('resultCard');
   const navBtn = document.getElementById('r_nav_btn');
@@ -597,7 +663,6 @@ function findProperty() {
     document.getElementById('r_sec').textContent = match.sector || '—';
     document.getElementById('r_coords').textContent = `${match.lat.toFixed(5)}, ${match.lng.toFixed(5)}`;
     
-    // Updates and reveals the side menu direct deep-link button mapping
     navBtn.href = `https://www.google.com/maps/search/?api=1&query=${match.lat},${match.lng}`;
     navBtn.style.display = 'flex';
 
@@ -606,35 +671,14 @@ function findProperty() {
     rc.className = 'notfound';
     document.getElementById('r_prop').textContent = propNum;
     document.getElementById('r_cat').textContent = cat;
-    document.getElementById('r_sec').textContent = '—';
+    document.getElementById('r_sec').textContent = sector;
     document.getElementById('r_coords').textContent = 'Not found';
     navBtn.style.display = 'none';
-    showToast('Property not found.', 'error');
+    showToast('No record matching this Sector, Category & Number setup.', 'error');
   }
 }
 
 document.getElementById('propInput').addEventListener('keydown', e => { if (e.key === 'Enter') findProperty(); });
-
-// Performance optimized batch execution array ceiling handling
-function showAll() {
-  if (csvData.length === 0) { showToast('Database downloading...', 'error'); return; }
-  clearMarkers();
-  document.getElementById('r_nav_btn').style.display = 'none';
-  const sector = document.getElementById('sectorFilter').value;
-  const cat = document.getElementById('catSelect').value;
-  
-  const filtered = csvData.filter(r => (!sector || r.sector === sector) && (!cat || r.cat === cat));
-  if (filtered.length === 0) { showToast('No data matches filters', 'error'); return; }
-
-  const MAX_MARKERS = 500;
-  const toRender = filtered.slice(0, MAX_MARKERS);
-  toRender.forEach(r => addMarker(r, false));
-
-  const coordinates = toRender.map(r => [r.lat, r.lng]);
-  map.fitBounds(coordinates);
-
-  showToast(filtered.length > MAX_MARKERS ? `Showing first ${MAX_MARKERS} items` : `Showing ${filtered.length} locations`, 'info');
-}
 
 function processURLParameters() {
   const params = new URLSearchParams(window.location.search);
@@ -642,17 +686,17 @@ function processURLParameters() {
   const pCat = params.get('cat');
   const pSec = params.get('sector');
 
-  if (pProp) document.getElementById('propInput').value = pProp;
-  if (pCat) {
-    const sel = document.getElementById('catSelect');
-    for (let o of sel.options) if (o.value.toUpperCase() === pCat.toUpperCase()) { sel.value = o.value; break; }
-  }
   if (pSec) {
     const sel = document.getElementById('sectorFilter');
     for (let o of sel.options) if (o.value.toUpperCase() === pSec.toUpperCase()) { sel.value = o.value; break; }
   }
+  if (pCat) {
+    const sel = document.getElementById('catSelect');
+    for (let o of sel.options) if (o.value.toUpperCase() === pCat.toUpperCase()) { sel.value = o.value; break; }
+  }
+  if (pProp) document.getElementById('propInput').value = pProp;
 
-  if (pProp && pCat) {
+  if (pProp && pCat && pSec) {
     setTimeout(() => { findProperty(); }, 300);
   }
 }
