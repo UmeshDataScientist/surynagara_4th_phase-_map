@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Property Location Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght=400;500;600;700&family=DM+Sans:wght=300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --surface2: #1a2236;
+      --border: #1f2d45;
+      --accent: #f59e0b;
+      --accent2: #3b82f6;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .logo span { color: var(--text); }
+    .header-badge {
+      font-size: 0.7rem;
+      background: var(--accent);
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* ── LAYOUT ── */
+    .app-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 340px;
+      min-width: 300px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* ── DATA STATUS INDICATOR ── */
+    .file-loaded {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid var(--accent2);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .file-loaded.ready {
+      background: rgba(16,185,129,0.1);
+      border-color: var(--success);
+    }
+    .file-loaded .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); }
+    .file-loaded.ready .dot { background: var(--success); }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 14px; }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input[type="text"]:focus { border-color: var(--accent); }
+    select option { background: var(--surface2); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: #d97706; transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent2);
+      border: 1px solid var(--accent2);
+      margin-top: 10px;
+    }
+    .btn-secondary:hover { background: rgba(59,130,246,0.1); }
+    .btn-outline {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .btn-outline:hover { border-color: var(--muted); color: var(--text); }
+
+    /* ── RESULT CARD ── */
+    #resultCard {
+      display: none;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+    #resultCard.found { border-color: var(--success); }
+    #resultCard.notfound { border-color: var(--danger); }
+    .result-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+    .result-value {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar { display: flex; gap: 4px; flex-wrap: wrap; }
+    .stat-chip {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .stat-chip strong { color: var(--text); }
+
+    /* ── LEGEND ── */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+    }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── MAP ── */
+    #map { flex: 1; height: 100%; }
+
+    /* ── TOAST & LAYERS ── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: var(--success); color: #fff; }
+    #toast.error { background: var(--danger); color: #fff; }
+    #toast.info { background: var(--accent2); color: #fff; }
+
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,14,23,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 700px) {
+      .app-container { flex-direction: column; }
+      .sidebar { width: 100%; min-width: unset; height: auto; max-height: 55vh; }
+      #map { height: 45vh; }
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .filter-row { display: flex; gap: 8px; }
+    .filter-row select { flex: 1; }
+
+    .gm-style .gm-style-iw-c { background: #ffffff !important; border-radius: 10px !important; padding: 12px !important; }
+    .gm-style .gm-style-iw-d { overflow: hidden !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Property<span>Map</span></div>
+  <span class="header-badge">BIDDER PORTAL</span>
+</header>
+
+<div class="app-container">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="section-title">Database Status</div>
+      <div class="file-loaded" id="dataStatus">
+        <div class="dot"></div>
+        <span id="statusText">Connecting to property database...</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-title">Search Property</div>
+      <div class="form-group">
+        <label>Property Number</label>
+        <input type="text" id="propInput" placeholder="e.g. 1" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="catSelect">
+          <option value="">— Select Category —</option>
+          <option>EWS</option>
+          <option>EWS ODD</option>
+          <option>LIG</option>
+          <option>LIG ODD</option>
+          <option>MIG</option>
+          <option>MIG-I</option>
+          <option>MIG ODD</option>
+          <option>HIG-I</option>
+          <option>HIG-I ODD</option>
+          <option>HIG-II</option>
+          <option>COMMERCIAL</option>
+          <option>GROUP HOUSING</option>
+        </select>
+      </div>
+      <div class="form-group filter-row">
+        <div style="flex:1">
+          <label>Sector (optional)</label>
+          <select id="sectorFilter">
+            <option value="">All Sectors</option>
+            <option>Sector-1</option><option>Sector-2</option>
+            <option>Sector-3</option><option>Sector-4</option>
+            <option>Sector-5</option><option>Sector-6</option>
+            <option>Sector-7</option><option>Sector-8</option>
+            <option>Sector-9</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="findProperty()">📍 Find My Property</button>
+      <button class="btn btn-secondary" onclick="showAll()">🗺️ Show All Properties</button>
+      <button class="btn btn-outline" onclick="clearMap()">✕ Clear Map</button>
+
+      <div id="resultCard">
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-label">Property No.</div>
+            <div class="result-value" id="r_prop">—</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Category</div>
+            <div class="result-value" id="r_cat">—</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Sector</div>
+            <div class="result-value" id="r_sec">—</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Coordinates</div>
+            <div class="result-value" id="r_coords" style="font-size:0.82rem">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="statsSection" style="display:none">
+      <div class="section-title">Data Summary</div>
+      <div class="stats-bar" id="statsBar"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-title">Category Legend</div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+</div>
+
+<div id="toast"></div>
+<div id="loadingOverlay"><div class="spinner"></div></div>
+
+<script>
+const CAT_COLORS = {
+  'EWS':          '#f59e0b',
+  'EWS ODD':      '#fbbf24',
+  'LIG':          '#3b82f6',
+  'LIG ODD':      '#60a5fa',
+  'MIG':          '#10b981',
+  'MIG-I':        '#059669',
+  'MIG ODD':      '#34d399',
+  'HIG-I':        '#8b5cf6',
+  'HIG-I ODD':    '#a78bfa',
+  'HIG-II':       '#ef4444',
+  'COMMERCIAL':   '#ec4899',
+  'GROUP HOUSING':'#06b6d4'
+};
+
+let map = null;
+let markers = [];
+let csvData = [];
+let activeInfoWindow = null;
+
+function buildLegend() {
+  const leg = document.getElementById('legend');
+  leg.innerHTML = '';
+  Object.keys(CAT_COLORS).forEach(cat => {
+    leg.innerHTML += `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${CAT_COLORS[cat]}"></div>
+        <span>${cat}</span>
+      </div>`;
+  });
+}
+buildLegend();
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 12.73, lng: 77.62 }, 
+    zoom: 13,
+    mapTypeId: 'roadmap',
+    styles: [
+      { elementType: 'geometry', stylers: [{ color: '#0a0e17' }] },
+      { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0e17' }] },
+      { elementType: 'labels.text.fill', stylers: [{ color: '#64748b' }] },
+      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a2236' }] },
+      { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
+      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
+      { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#3b82f6' }] },
+      { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+      { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+      { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#1f2d45' }] },
+      { featureType: 'administrative.country', elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
+      { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#111827' }] },
+    ],
+    mapTypeControl: true,
+    streetViewControl: false,
+    fullscreenControl: true,
+  });
+  
+  // Trigger absolute background download once map finishes loading
+  autoLoadDatabase();
+}
+
+async function autoLoadDatabase() {
+  try {
+    // Looks for SURYA-4.csv directly in the same root folder on your server
+    const response = await fetch('SURYA-4.csv');
+    if (!response.ok) throw new Error('Database file not found on server.');
+    
+    const rawText = await response.text();
+    csvData = parseCSV(rawText);
+    
+    if (csvData.length === 0) throw new Error('Database parsed empty.');
+
+    // Update Status Module
+    const statusBox = document.getElementById('dataStatus');
+    statusBox.classList.add('ready');
+    document.getElementById('statusText').innerHTML = `<strong>Connected</strong> — ${csvData.length} records`;
+    document.getElementById('loadingOverlay').style.display = 'none';
+
+    showStats();
+    autoCenter();
+    
+    // Check if parameters exist in the URL string to execute immediate lookup
+    processURLParameters();
+
+  } catch (err) {
+    document.getElementById('statusText').innerText = "Database Error: " + err.message;
+    document.getElementById('loadingOverlay').style.display = 'none';
+    showToast('Failed to load database: ' + err.message, 'error');
+  }
+}
+
+function parseCoordinate(coordStr) {
+  if (!coordStr) return NaN;
+  const cleaned = coordStr.trim().replace(/"/g, '');
+  const dmsMatch = cleaned.match(/(\d+)\s*°\s*(\d+)\s*'\s*([\d.]+)\s*/);
+  if (dmsMatch) {
+    const deg = parseFloat(dmsMatch[1]);
+    const min = parseFloat(dmsMatch[2]);
+    const sec = parseFloat(dmsMatch[3]);
+    return deg + (min / 60) + (sec / 3600);
+  }
+  const fallback = parseFloat(cleaned);
+  return isNaN(fallback) ? NaN : fallback;
+}
+
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+  if (lines.length < 2) return [];
+
+  const header = lines[0].split(',').map(h => h.trim().replace(/"/g,''));
+  const colMap = {};
+  header.forEach((h, i) => {
+    const key = h.toLowerCase();
+    if (key === 'property_n' || key === 'property_no' || key === 'propertyn') colMap.prop = i;
+    if (key === 'category' || key === 'cat') colMap.cat = i;
+    if (key === 'sector') colMap.sector = i;
+    if (key === 'latitude' || key === 'lat') colMap.lat = i;
+    if (key === 'longitude' || key === 'lng' || key === 'lon' || key === 'long' || key === 'longitud') colMap.lng = i;
+  });
+
+  const required = ['prop','cat','lat','lng'];
+  if (!required.every(k => colMap[k] !== undefined)) return [];
+
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVLine(lines[i]);
+    if (!cols || cols.length <= Math.max(...Object.values(colMap))) continue;
+    const cat = (cols[colMap.cat] || '').trim().replace(/"/g,'');
+    if (!cat) continue;
+    
+    const lat = parseCoordinate(cols[colMap.lat]);
+    const lng = parseCoordinate(cols[colMap.lng]);
+    if (isNaN(lat) || isNaN(lng)) continue;
+
+    rows.push({
+      prop: (cols[colMap.prop] || '').trim().replace(/"/g,''),
+      cat,
+      sector: colMap.sector !== undefined ? (cols[colMap.sector] || '').trim().replace(/"/g,'') : '',
+      lat,
+      lng,
+    });
+  }
+  return rows;
+}
+
+function parseCSVLine(line) {
+  const result = []; let cur = ''; let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQuotes = !inQuotes; continue; }
+    if (c === ',' && !inQuotes) { result.push(cur); cur = ''; continue; }
+    cur += c;
+  }
+  result.push(cur); return result;
+}
+
+function showStats() {
+  const counts = {};
+  csvData.forEach(r => { counts[r.cat] = (counts[r.cat] || 0) + 1; });
+  const bar = document.getElementById('statsBar');
+  bar.innerHTML = `<div class="stat-chip"><strong>${csvData.length}</strong> total</div>`;
+  Object.entries(counts).forEach(([cat, n]) => {
+    bar.innerHTML += `<div class="stat-chip"><strong>${n}</strong> ${cat}</div>`;
+  });
+  document.getElementById('statsSection').style.display = 'block';
+}
+
+function autoCenter() {
+  if (!map || csvData.length === 0) return;
+  const bounds = new google.maps.LatLngBounds();
+  csvData.forEach(r => bounds.extend({ lat: r.lat, lng: r.lng }));
+  map.fitBounds(bounds);
+}
+
+function clearMarkers() {
+  markers.forEach(m => m.setMap(null)); markers = [];
+  if (activeInfoWindow) { activeInfoWindow.close(); activeInfoWindow = null; }
+}
+
+function clearMap() {
+  clearMarkers();
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'none'; rc.className = '';
+  showToast('Map cleared', 'info');
+}
+
+function addMarker(row, highlight = false) {
+  const color = CAT_COLORS[row.cat] || '#64748b'; 
+  const width = highlight ? 40 : 28; const height = highlight ? 52 : 36;
+  
+  const svgIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 32 42">
+      <filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.4"/></filter>
+      <path d="M16 0C7.163 0 0 7.163 0 16c0 10 16 26 16 26S32 26 32 16C32 7.163 24.837 0 16 0z" fill="${color}" filter="url(#shadow)" opacity="${highlight ? 1 : 0.85}"/>
+      <circle cx="16" cy="16" r="${highlight ? 8 : 6}" fill="#fff"/>
+      ${highlight ? '<circle cx="16" cy="16" r="4" fill="' + color + '"/>' : ''}
+    </svg>`;
+
+  const marker = new google.maps.Marker({
+    position: { lat: row.lat, lng: row.lng },
+    map,
+    icon: {
+      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon),
+      scaledSize: new google.maps.Size(width, height),
+      anchor: new google.maps.Point(width / 2, height),
+    },
+    title: row.prop,
+    zIndex: highlight ? 100 : 1,
+  });
+
+  const iw = new google.maps.InfoWindow({
+    content: `
+      <div style="font-family:'DM Sans',sans-serif; padding:2px; min-width:140px; color:#111111;">
+        <div style="font-weight:700; font-size:1rem; margin-bottom:4px">Property #${row.prop}</div>
+        <div style="font-size:0.8rem; color:#4b5563; margin-bottom:2px">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${color}; margin-right:5px; vertical-align:middle"></span>
+          ${row.cat}
+        </div>
+        ${row.sector ? `<div style="font-size:0.78rem; color:#6b7280">${row.sector}</div>` : ''}
+        <div style="font-size:0.72rem; color:#9ca3af; margin-top:6px">${row.lat.toFixed(6)}, ${row.lng.toFixed(6)}</div>
+      </div>`
+  });
+
+  marker.addListener('click', () => {
+    if (activeInfoWindow) activeInfoWindow.close();
+    iw.open(map, marker); activeInfoWindow = iw;
+  });
+
+  if (highlight) {
+    if (activeInfoWindow) activeInfoWindow.close();
+    iw.open(map, marker); activeInfoWindow = iw;
+  }
+
+  markers.push(marker); return marker;
+}
+
+function findProperty() {
+  if (csvData.length === 0) { showToast('Database still downloading...', 'error'); return; }
+  const propNum = document.getElementById('propInput').value.trim();
+  const cat = document.getElementById('catSelect').value;
+  const sector = document.getElementById('sectorFilter').value;
+
+  if (!propNum || !cat) { showToast('Please select both Property No. & Category', 'error'); return; }
+
+  let match = csvData.find(r => r.prop.toLowerCase() === propNum.toLowerCase() && r.cat === cat);
+  if (match && sector && match.sector !== sector) match = null;
+
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+
+  if (match) {
+    clearMarkers();
+    addMarker(match, true);
+    map.setCenter({ lat: match.lat, lng: match.lng });
+    map.setZoom(18);
+
+    rc.className = 'found';
+    document.getElementById('r_prop').textContent = match.prop;
+    document.getElementById('r_cat').textContent = match.cat;
+    document.getElementById('r_sec').textContent = match.sector || '—';
+    document.getElementById('r_coords').textContent = `${match.lat.toFixed(5)}, ${match.lng.toFixed(5)}`;
+    showToast('✓ Property found!', 'success');
+  } else {
+    rc.className = 'notfound';
+    document.getElementById('r_prop').textContent = propNum;
+    document.getElementById('r_cat').textContent = cat;
+    document.getElementById('r_sec').textContent = '—';
+    document.getElementById('r_coords').textContent = 'Not found';
+    showToast('Property not found.', 'error');
+  }
+}
+
+document.getElementById('propInput').addEventListener('keydown', e => { if (e.key === 'Enter') findProperty(); });
+
+function showAll() {
+  if (csvData.length === 0) { showToast('Database downloading...', 'error'); return; }
+  clearMarkers();
+  const sector = document.getElementById('sectorFilter').value;
+  const cat = document.getElementById('catSelect').value;
+  
+  const filtered = csvData.filter(r => (!sector || r.sector === sector) && (!cat || r.cat === cat));
+  if (filtered.length === 0) { showToast('No data matches filters', 'error'); return; }
+
+  const MAX_MARKERS = 500;
+  const toRender = filtered.slice(0, MAX_MARKERS);
+  toRender.forEach(r => addMarker(r, false));
+
+  const bounds = new google.maps.LatLngBounds();
+  toRender.forEach(r => bounds.extend({ lat: r.lat, lng: r.lng }));
+  map.fitBounds(bounds);
+
+  showToast(filtered.length > MAX_MARKERS ? `Showing first ${MAX_MARKERS} items` : `Showing ${filtered.length} locations`, 'info');
+}
+
+function processURLParameters() {
+  const params = new URLSearchParams(window.location.search);
+  const pProp = params.get('prop');
+  const pCat = params.get('cat');
+  const pSec = params.get('sector');
+
+  if (pProp) document.getElementById('propInput').value = pProp;
+  if (pCat) {
+    const sel = document.getElementById('catSelect');
+    for (let o of sel.options) if (o.value.toUpperCase() === pCat.toUpperCase()) { sel.value = o.value; break; }
+  }
+  if (pSec) {
+    const sel = document.getElementById('sectorFilter');
+    for (let o of sel.options) if (o.value.toUpperCase() === pSec.toUpperCase()) { sel.value = o.value; break; }
+  }
+
+  // **Smart Auto-Run Execution Trigger**
+  if (pProp && pCat) {
+    setTimeout(() => { findProperty(); }, 300);
+  }
+}
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast'); t.textContent = msg; t.className = `show ${type}`;
+  setTimeout(() => { t.className = ''; }, 3000);
+}
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
+</body>
+</html>
