@@ -33,6 +33,7 @@
       overflow-x: hidden;
     }
 
+    /* ── RE-ENGINEERED HEADER STRIP ── */
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -54,16 +55,28 @@
       text-transform: uppercase;
     }
     .logo span { color: var(--text); }
-    .header-badge {
-      font-size: 0.7rem;
-      background: var(--accent);
-      color: #000;
-      padding: 2px 8px;
-      border-radius: 20px;
+    
+    /* Compact Corporate Header Branding Element */
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-logo-img {
+      max-height: 32px; /* Scale reduced for optimal corner profile */
+      width: auto;
+      display: block;
+    }
+    .header-brand-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
+      color: var(--text);
+      text-transform: uppercase;
     }
 
+    /* ── LAYOUT STRUCTURE ── */
     .app-container {
       display: flex;
       height: calc(100vh - 60px);
@@ -85,31 +98,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* ── BRAND LOGO CONTAINER ── */
-    .brand-container {
-      text-align: center;
-      padding: 16px 10px;
-      background: var(--surface2);
-      border-radius: 8px;
-      margin-bottom: 5px;
-      border: 1px solid var(--border);
-    }
-    .brand-logo {
-      max-width: 85px;
-      height: auto;
-      margin-bottom: 10px;
-      display: inline-block;
-    }
-    .brand-name {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--text);
-      line-height: 1.3;
-      text-transform: uppercase;
-    }
-
     .section-title {
       font-family: 'Rajdhani', sans-serif;
       font-size: 0.75rem;
@@ -125,16 +113,18 @@
       align-items: center;
       gap: 10px;
       padding: 10px 14px;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid var(--accent2);
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 0.85rem;
+      color: var(--muted);
     }
     .file-loaded.ready {
       background: rgba(16,185,129,0.1);
       border-color: var(--success);
+      color: var(--text);
     }
-    .file-loaded .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); }
+    .file-loaded .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
     .file-loaded.ready .dot { background: var(--success); }
 
     .form-group { margin-bottom: 14px; }
@@ -213,7 +203,7 @@
     .result-value { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--text); }
     .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 
-    /* ── CORPORATE OFFICE FOOTER BLOCK ── */
+    /* ── CORPORATE FOOTER ── */
     .corporate-footer {
       padding: 20px;
       background: rgba(10, 14, 23, 0.4);
@@ -233,11 +223,6 @@
       font-size: 0.78rem;
       color: var(--muted);
       line-height: 1.5;
-    }
-    .footer-link {
-      color: var(--accent2);
-      text-decoration: none;
-      font-weight: 500;
     }
 
     .stats-bar { display: flex; gap: 4px; flex-wrap: wrap; }
@@ -304,6 +289,8 @@
       .app-container { flex-direction: column; }
       .sidebar { width: 100%; min-width: unset; height: auto; max-height: 55vh; }
       #map { height: 45vh; }
+      header { padding: 0 12px; }
+      .header-brand-name { display: none; } /* Hide name on small screens to avoid header squishing */
     }
   </style>
 </head>
@@ -311,19 +298,19 @@
 
 <header>
   <div class="logo">KHB-<span>Suryanagara 4th Phase Properties</span></div>
-  <span class="header-badge">LIVE DATABASE</span>
+  
+  <div class="header-brand">
+    <img src="parva-logo.png" alt="Parva Logo" class="header-logo-img" onerror="this.style.display='none';">
+    <div class="header-brand-name">Parva Planning & Infrastructure</div>
+  </div>
 </header>
 
 <div class="app-container">
   <div class="sidebar">
     <div class="sidebar-section">
-      <div class="brand-container">
-        <img src="parva-logo.png" alt="Parva Logo" class="brand-logo" onerror="this.style.display='none';">
-        <div class="brand-name">Parva Planning & Infrastructure</div>
-      </div>
       <div class="file-loaded" id="dataStatus">
         <div class="dot"></div>
-        <span id="statusText">Connecting to database...</span>
+        <span id="statusText">Connecting to property database...</span>
       </div>
     </div>
 
@@ -392,7 +379,7 @@
             <div class="result-value" id="r_coords" style="font-size:0.82rem">—</div>
           </div>
         </div>
-        <a id="r_nav_btn" href="#" target="_blank" class="btn btn-primary btn-nav" style="display:none;">com.google.android.apps.maps Navigation</a>
+        <a id="r_nav_btn" href="#" target="_blank" class="btn btn-primary btn-nav" style="display:none;">🧭 Open in Google Maps</a>
       </div>
     </div>
 
@@ -481,7 +468,8 @@ async function autoLoadDatabase() {
 
     const statusBox = document.getElementById('dataStatus');
     statusBox.classList.add('ready');
-    document.getElementById('statusText').innerHTML = `<strong>Connected</strong> — ${csvData.length} records`;
+    // Removed raw count trace summary to hide quantitative array values
+    document.getElementById('statusText').innerHTML = `<strong>Database Connected</strong>`;
     document.getElementById('loadingOverlay').style.display = 'none';
 
     showStats();
@@ -557,10 +545,7 @@ function showStats() {
   const counts = {};
   csvData.forEach(r => { counts[r.cat] = (counts[r.cat] || 0) + 1; });
   const bar = document.getElementById('statsBar');
-  bar.innerHTML = `<div class="stat-chip"><strong>${csvData.length}</strong> total</div>`;
-  Object.entries(counts).forEach(([cat, n]) => {
-    bar.innerHTML += `<div class="stat-chip"><strong>${n}</strong> ${cat}</div>`;
-  });
+  bar.innerHTML = `<div class="stat-chip"><strong>Properties Loaded Successfully</strong></div>`;
   document.getElementById('statsSection').style.display = 'block';
 }
 
@@ -636,12 +621,10 @@ function findProperty() {
   const cat = document.getElementById('catSelect').value;
   const propNum = document.getElementById('propInput').value.trim();
 
-  // Strict compulsory logic verification checks
   if (!sector) { showToast('Please select a Sector first.', 'error'); return; }
   if (!cat) { showToast('Please select a Property Category.', 'error'); return; }
   if (!propNum) { showToast('Please enter a Property Number.', 'error'); return; }
 
-  // Exact compound matching evaluation lookup
   let match = csvData.find(r => 
     r.prop.toLowerCase() === propNum.toLowerCase() && 
     r.cat.toLowerCase() === cat.toLowerCase() && 
@@ -674,7 +657,7 @@ function findProperty() {
     document.getElementById('r_sec').textContent = sector;
     document.getElementById('r_coords').textContent = 'Not found';
     navBtn.style.display = 'none';
-    showToast('No record matching this Sector, Category & Number setup.', 'error');
+    showToast('No record matching this setup.', 'error');
   }
 }
 
