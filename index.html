@@ -699,6 +699,9 @@ function showToast(msg, type = 'info') {
 }
 </script>
 
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
-</body>
-</html>
+<script>
+  (g=>{var h=window,b="google",k="maps",p="importLibrary",q="__ib__",m=document,a=h[b]||(h[b]={}),o=a[k]||(a[k]={}),e=a.maps,r=new RegExp("^https?://"),s=Symbol.for("mil"),d=({p:c,v:f,n:l,r:j})=>{var i=new Promise((u,v)=>{var n=m.createElement("script");n.src=c;l&&(n.id=l);n.onerror=()=>v(Error(b+" could not load."));n.onload=()=>u(a);m.head.appendChild(n)});return i};h[b][k]||(h[b][k]={});h[b][k][p]=(c,...f)=>e?e[p](c,...f):(o[q]||(o[q]=[])).push([c,...f])&&d({p:"https://maps."+b+"apis.com/maps/api/js?key="+g.key+"&v="+g.v+"&callback=initMap",v:g.v});})({
+    key: "PASTE_YOUR_ACTUAL_API_KEY_HERE",
+    v: "weekly"
+  });
+</script>
