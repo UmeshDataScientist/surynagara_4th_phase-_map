@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KHB-Suryanagara 4th Phase Properties</title>
+  <title>find my property by parva.com</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght=400;500;600;700&family=DM+Sans:wght=300;400;500;700&display=swap" rel="stylesheet">
-  
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
   <style>
+    /* 5. Modern Redefined Deep Color Combinations */
     :root {
-      --bg: #0a0e17;
-      --surface: #111827;
-      --surface2: #1a2236;
-      --border: #1f2d45;
-      --accent: #f59e0b;
-      --accent2: #3b82f6;
-      --text: #e2e8f0;
-      --muted: #64748b;
+      --bg: #070b12;
+      --surface: #0f1626;
+      --surface2: #17223b;
+      --border: #223254;
+      --accent: #eab308;
+      --accent2: #2563eb;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
       --success: #10b981;
       --danger: #ef4444;
     }
@@ -30,10 +31,45 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-    /* ── RE-ENGINEERED HEADER STRIP ── */
+    /* 5. Transient Logo Preloader Splash Screen Overlay */
+    #splashOverlay {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s ease;
+    }
+    .splash-container {
+      text-align: center;
+      animation: pulseLogo 2s infinite alternate;
+    }
+    .splash-logo-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 4px;
+    }
+    .splash-logo-text span { color: var(--accent); }
+    .splash-sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    @keyframes pulseLogo {
+      0% { transform: scale(0.98); opacity: 0.85; }
+      100% { transform: scale(1.02); opacity: 1; }
+    }
+
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -56,16 +92,10 @@
     }
     .logo span { color: var(--text); }
     
-    /* Compact Corporate Header Branding Element */
     .header-brand {
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-    .header-logo-img {
-      max-height: 32px; /* Scale reduced for optimal corner profile */
-      width: auto;
-      display: block;
     }
     .header-brand-name {
       font-family: 'Rajdhani', sans-serif;
@@ -76,7 +106,6 @@
       text-transform: uppercase;
     }
 
-    /* ── LAYOUT STRUCTURE ── */
     .app-container {
       display: flex;
       height: calc(100vh - 60px);
@@ -108,12 +137,27 @@
       margin-bottom: 14px;
     }
 
+    /* 9. DateTime Control Box Styles */
+    .datetime-box {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      background: rgba(234, 179, 8, 0.04);
+      border: 1px dashed var(--border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
     .file-loaded {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 10px 14px;
-      background: rgba(245, 158, 11, 0.05);
+      background: rgba(234, 179, 8, 0.05);
       border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 0.85rem;
@@ -147,7 +191,6 @@
       font-family: 'DM Sans', sans-serif;
       font-size: 0.9rem;
       outline: none;
-      transition: border-color 0.2s;
     }
     select:focus, input[type="text"]:focus { border-color: var(--accent); }
 
@@ -165,7 +208,7 @@
       transition: all 0.2s;
     }
     .btn-primary { background: var(--accent); color: #000; }
-    .btn-primary:hover { background: #d97706; transform: translateY(-1px); }
+    .btn-primary:hover { background: #ca8a04; transform: translateY(-1px); }
     .btn-outline {
       background: transparent;
       color: var(--muted);
@@ -175,7 +218,7 @@
     .btn-outline:hover { border-color: var(--muted); color: var(--text); }
     
     .btn-nav {
-      background: #2563eb;
+      background: var(--accent2);
       color: #ffffff;
       margin-top: 12px;
       font-size: 0.85rem;
@@ -187,7 +230,6 @@
       gap: 6px;
       font-weight: 700;
     }
-    .btn-nav:hover { background: #1d4ed8; }
 
     #resultCard {
       display: none;
@@ -198,15 +240,35 @@
       margin-top: 14px;
     }
     #resultCard.found { border-color: var(--success); }
-    #resultCard.notfound { border-color: var(--danger); }
+    
+    /* 3. Wrong Property Details Not Found Styles */
+    #resultCard.notfound { 
+      border-color: var(--danger); 
+      background: rgba(239, 68, 68, 0.03);
+      animation: shakeErr 0.4s ease-in-out;
+    }
+    @keyframes shakeErr {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .err-callout {
+      color: var(--danger);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      text-align: center;
+      padding: 8px 0;
+    }
+
     .result-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
     .result-value { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--text); }
     .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 
-    /* ── CORPORATE FOOTER ── */
     .corporate-footer {
-      padding: 20px;
-      background: rgba(10, 14, 23, 0.4);
+      padding: 16px 20px;
+      background: rgba(5, 8, 14, 0.6);
       border-top: 1px solid var(--border);
       margin-top: auto;
     }
@@ -217,12 +279,22 @@
       color: var(--text);
       letter-spacing: 1px;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .footer-text {
       font-size: 0.78rem;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.4;
+    }
+
+    /* 7. Low profile Minimal Visitor Tracker Viewport */
+    .visitor-tracker {
+      font-size: 0.65rem;
+      color: #334155;
+      font-family: monospace;
+      margin-top: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .stats-bar { display: flex; gap: 4px; flex-wrap: wrap; }
@@ -239,7 +311,32 @@
     .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.82rem; }
     .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
-    #map { flex: 1; height: 100%; background: #0c101f; }
+    .map-wrapper {
+      flex: 1;
+      height: 100%;
+      position: relative;
+    }
+    #map { width: 100%; height: 100%; background: #070a14; }
+
+    /* 8. Dynamic Floating Decimal Degrees Zoom Coordinate HUD Panel Overlay */
+    .coordinate-hud {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(15, 22, 38, 0.85);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem;
+      color: var(--text);
+      z-index: 1000;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(4px);
+    }
+    .coordinate-hud span { color: var(--accent); font-weight: 600; }
 
     #toast {
       position: fixed;
@@ -263,7 +360,7 @@
     #loadingOverlay {
       position: fixed;
       inset: 0;
-      background: rgba(10,14,23,0.8);
+      background: rgba(7,11,18,0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -279,34 +376,46 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .leaflet-layer, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+    /* Dark Mode Inverse Layer Correction Filter Wrapper Override */
+    .dark-map-tiles {
       filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
     }
-    .leaflet-popup-content-wrapper { background: #ffffff !important; color: #111111 !important; border-radius: 8px; padding: 4px; }
-    .leaflet-popup-tip { background: #ffffff !important; }
 
     @media (max-width: 700px) {
       .app-container { flex-direction: column; }
       .sidebar { width: 100%; min-width: unset; height: auto; max-height: 55vh; }
-      #map { height: 45vh; }
+      .map-wrapper { height: 45vh; }
       header { padding: 0 12px; }
-      .header-brand-name { display: none; } /* Hide name on small screens to avoid header squishing */
+      .header-brand-name { display: none; }
     }
   </style>
 </head>
 <body>
 
+<div id="splashOverlay">
+  <div class="splash-container">
+    <div class="splash-logo-text">KHB<span>-SURYA</span></div>
+    <div class="splash-sub">Parva Planning & Infrastructure</div>
+  </div>
+</div>
+
 <header>
-  <div class="logo">KHB-<span>Suryanagara 4th Phase Properties</span></div>
-  
+  <div class="logo">KHB-<span>Suryanagara 4th Phase</span></div>
   <div class="header-brand">
-    <img src="parva-logo.png" alt="Parva Logo" class="header-logo-img" onerror="this.style.display='none';">
     <div class="header-brand-name">Parva Planning & Infrastructure</div>
   </div>
 </header>
 
 <div class="app-container">
   <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="section-title">System Timestamp</div>
+      <div class="datetime-box">
+        <div id="liveDate">00-00-0000</div>
+        <div id="liveTime">00:00:00 AM</div>
+      </div>
+    </div>
+
     <div class="sidebar-section">
       <div class="file-loaded" id="dataStatus">
         <div class="dot"></div>
@@ -361,25 +470,31 @@
       <button class="btn btn-outline" onclick="clearMap()">✕ Clear Map</button>
 
       <div id="resultCard">
-        <div class="result-grid">
-          <div class="result-item">
-            <div class="result-label">Property No.</div>
-            <div class="result-value" id="r_prop">—</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Category</div>
-            <div class="result-value" id="r_cat">—</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Sector</div>
-            <div class="result-value" id="r_sec">—</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Coordinates</div>
-            <div class="result-value" id="r_coords" style="font-size:0.82rem">—</div>
-          </div>
+        <div id="notFoundLayout" style="display:none;">
+          <div class="err-callout">PROPERTY NOT EXIST</div>
         </div>
-        <a id="r_nav_btn" href="#" target="_blank" class="btn btn-primary btn-nav" style="display:none;">🧭 Open in Google Maps</a>
+        
+        <div id="foundLayout">
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label">Property No.</div>
+              <div class="result-value" id="r_prop">—</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Category</div>
+              <div class="result-value" id="r_cat">—</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Sector</div>
+              <div class="result-value" id="r_sec">—</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Coordinates</div>
+              <div class="result-value" id="r_coords" style="font-size:0.82rem">—</div>
+            </div>
+          </div>
+          <a id="r_nav_btn" href="#" target="_blank" class="btn btn-primary btn-nav" style="display:none;">🧭 Open in Google Maps</a>
+        </div>
       </div>
     </div>
 
@@ -397,14 +512,20 @@
       <div class="footer-title">Corporate Office</div>
       <div class="footer-text">
         <strong>Parva Planning and Infrastructure</strong><br/>
-        Layout Design & Property Planning Services<br/>
-        Karnataka, India<br/>
-        <span style="display:inline-block; margin-top:5px;">📞 Contact Support for Layout Services</span>
+        Karnataka, India
+      </div>
+      <div class="visitor-tracker">
+        Site Visits: <span id="visitCount">1,482</span>
       </div>
     </div>
   </div>
 
-  <div id="map"></div>
+  <div class="map-wrapper">
+    <div id="map"></div>
+    <div class="coordinate-hud" id="coordHud">
+      Lat: <span id="hudLat">0.000000</span> | Lng: <span id="hudLng">0.000000</span> | Zoom: <span id="hudZoom">0</span>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -432,6 +553,10 @@ let map = null;
 let markers = [];
 let csvData = [];
 
+// 1. Map Layers Matrix Configurations
+let streetLayer = null;
+let satelliteLayer = null;
+
 function buildLegend() {
   const leg = document.getElementById('legend');
   leg.innerHTML = '';
@@ -445,14 +570,78 @@ function buildLegend() {
 }
 buildLegend();
 
-function initMap() {
-  map = L.map('map').setView([12.73, 77.62], 13);
+// 9. Interactive System Running Timestamp Clock Engine
+function startClock() {
+  const updateClock = () => {
+    const now = new Date();
+    
+    let d = String(now.getDate()).padStart(2,'0');
+    let m = String(now.getMonth() + 1).padStart(2,'0');
+    let y = now.getFullYear();
+    document.getElementById('liveDate').textContent = `${d}-${m}-${y}`;
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    let hrs = now.getHours();
+    let mins = String(now.getMinutes()).padStart(2,'0');
+    let secs = String(now.getSeconds()).padStart(2,'0');
+    let ampm = hrs >= 12 ? 'PM' : 'AM';
+    hrs = hrs % 12;
+    hrs = hrs ? hrs : 12; 
+    document.getElementById('liveTime').textContent = `${String(hrs).padStart(2,'0')}:${mins}:${secs} ${ampm}`;
+  };
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+startClock();
+
+// 7. Client Side Visit Counter Persistence Mock
+function initializeVisitCounter() {
+  let count = localStorage.getItem('parva_visit_metric') || 1482;
+  count = parseInt(count) + 1;
+  localStorage.setItem('parva_visit_metric', count);
+  document.getElementById('visitCount').textContent = count.toLocaleString();
+}
+initializeVisitCounter();
+
+function initMap() {
+  // Initialize OpenStreetMap Dark Street Layer
+  streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
+    className: 'dark-map-tiles',
     attribution: '© OpenStreetMap contributors'
-  }).addTo(map);
+  });
+
+  // 1 & 4. Free Satellite Images Layer Setup (No Token/Keys Needed)
+  satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19,
+    attribution: 'Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  });
+
+  // Render Map with Default Street View
+  map = L.map('map', {
+    center: [12.73, 77.62],
+    zoom: 13,
+    layers: [streetLayer]
+  });
+
+  // 4. Base Mapping Layers Selection Control Anchor Toggle
+  const baseMaps = {
+    "Dark Vector Streets": streetLayer,
+    "Free Satellite Earth": satelliteLayer
+  };
+  L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+
+  // 8. Register Move/Zoom Listeners to Capture Live Realtime Decimal Degrees
+  const updateHudCoordinates = () => {
+    const center = map.getCenter();
+    document.getElementById('hudLat').textContent = center.lat.toFixed(6);
+    document.getElementById('hudLng').textContent = center.lng.toFixed(6);
+    document.getElementById('hudZoom').textContent = map.getZoom();
+  };
   
+  map.on('move', updateHudCoordinates);
+  map.on('zoomend', updateHudCoordinates);
+  updateHudCoordinates(); // Init values
+
   autoLoadDatabase();
 }
 
@@ -468,7 +657,6 @@ async function autoLoadDatabase() {
 
     const statusBox = document.getElementById('dataStatus');
     statusBox.classList.add('ready');
-    // Removed raw count trace summary to hide quantitative array values
     document.getElementById('statusText').innerHTML = `<strong>Database Connected</strong>`;
     document.getElementById('loadingOverlay').style.display = 'none';
 
@@ -477,9 +665,9 @@ async function autoLoadDatabase() {
     processURLParameters();
 
   } catch (err) {
-    document.getElementById('statusText').innerText = "Database Error: " + err.message;
+    document.getElementById('statusText').innerText = "Database Error";
     document.getElementById('loadingOverlay').style.display = 'none';
-    showToast('Failed to load database: ' + err.message, 'error');
+    showToast('Failed to load database config', 'error');
   }
 }
 
@@ -545,7 +733,7 @@ function showStats() {
   const counts = {};
   csvData.forEach(r => { counts[r.cat] = (counts[r.cat] || 0) + 1; });
   const bar = document.getElementById('statsBar');
-  bar.innerHTML = `<div class="stat-chip"><strong>Properties Loaded Successfully</strong></div>`;
+  bar.innerHTML = `<div class="stat-chip"><strong>Properties Configured</strong></div>`;
   document.getElementById('statsSection').style.display = 'block';
 }
 
@@ -564,8 +752,7 @@ function clearMap() {
   clearMarkers();
   const rc = document.getElementById('resultCard');
   rc.style.display = 'none'; rc.className = '';
-  document.getElementById('r_nav_btn').style.display = 'none';
-  showToast('Map cleared', 'info');
+  showToast('Map visualization reset', 'info');
 }
 
 function addMarker(row, highlight = false) {
@@ -595,21 +782,13 @@ function addMarker(row, highlight = false) {
   const popupContent = `
     <div style="font-family:'DM Sans',sans-serif; padding:2px; min-width:160px; color:#111111;">
       <div style="font-weight:700; font-size:1rem; margin-bottom:4px">Property #${row.prop}</div>
-      <div style="font-size:0.8rem; color:#4b5563; margin-bottom:2px">
-        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${color}; margin-right:5px; vertical-align:middle"></span>
-        ${row.cat}
-      </div>
+      <div style="font-size:0.8rem; color:#4b5563; margin-bottom:2px">${row.cat}</div>
       ${row.sector ? `<div style="font-size:0.78rem; color:#6b7280">${row.sector}</div>` : ''}
-      <div style="font-size:0.72rem; color:#9ca3af; margin-top:6px">${row.lat.toFixed(6)}, ${row.lng.toFixed(6)}</div>
-      <a href="${googleMapsUrl}" target="_blank" style="display:block; text-align:center; background:#2563eb; color:#fff; text-decoration:none; font-weight:700; font-size:0.75rem; padding:8px; margin-top:8px; border-radius:4px;">🧭 Open in Google Maps</a>
+      <a href="${googleMapsUrl}" target="_blank" style="display:block; text-align:center; background:#2563eb; color:#fff; text-decoration:none; font-weight:700; font-size:0.75rem; padding:8px; margin-top:8px; border-radius:4px;">🧭 Navigate</a>
     </div>`;
 
   marker.bindPopup(popupContent);
-
-  if (highlight) {
-    marker.openPopup();
-  }
-
+  if (highlight) marker.openPopup();
   markers.push(marker);
   return marker;
 }
@@ -621,9 +800,10 @@ function findProperty() {
   const cat = document.getElementById('catSelect').value;
   const propNum = document.getElementById('propInput').value.trim();
 
-  if (!sector) { showToast('Please select a Sector first.', 'error'); return; }
-  if (!cat) { showToast('Please select a Property Category.', 'error'); return; }
-  if (!propNum) { showToast('Please enter a Property Number.', 'error'); return; }
+  if (!sector || !cat || !propNum) { 
+    showToast('Please fill all search criteria layout options.', 'error'); 
+    return; 
+  }
 
   let match = csvData.find(r => 
     r.prop.toLowerCase() === propNum.toLowerCase() && 
@@ -632,32 +812,38 @@ function findProperty() {
   );
 
   const rc = document.getElementById('resultCard');
-  const navBtn = document.getElementById('r_nav_btn');
+  const foundLayout = document.getElementById('foundLayout');
+  const notFoundLayout = document.getElementById('notFoundLayout');
+  
   rc.style.display = 'block';
 
   if (match) {
+    // Show Found Interface Details
+    rc.className = 'found';
+    foundLayout.style.display = 'block';
+    notFoundLayout.style.display = 'none';
+
     clearMarkers();
     addMarker(match, true);
     map.setView([match.lat, match.lng], 18);
 
-    rc.className = 'found';
     document.getElementById('r_prop').textContent = match.prop;
     document.getElementById('r_cat').textContent = match.cat;
     document.getElementById('r_sec').textContent = match.sector || '—';
     document.getElementById('r_coords').textContent = `${match.lat.toFixed(5)}, ${match.lng.toFixed(5)}`;
     
+    const navBtn = document.getElementById('r_nav_btn');
     navBtn.href = `https://www.google.com/maps/search/?api=1&query=${match.lat},${match.lng}`;
     navBtn.style.display = 'flex';
 
-    showToast('✓ Property found!', 'success');
+    showToast('✓ Property located', 'success');
   } else {
+    // 3. Output "PROPERTY NOT EXIST" On Validation Miss Matching
     rc.className = 'notfound';
-    document.getElementById('r_prop').textContent = propNum;
-    document.getElementById('r_cat').textContent = cat;
-    document.getElementById('r_sec').textContent = sector;
-    document.getElementById('r_coords').textContent = 'Not found';
-    navBtn.style.display = 'none';
-    showToast('No record matching this setup.', 'error');
+    foundLayout.style.display = 'none';
+    notFoundLayout.style.display = 'block';
+    
+    showToast('Property configuration query not found', 'error');
   }
 }
 
@@ -689,7 +875,20 @@ function showToast(msg, type = 'info') {
   setTimeout(() => { t.className = ''; }, 3000);
 }
 
-initMap();
+// 5. Fire Transient Preloader Animation Removal Handle Loop
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splashOverlay');
+    splash.style.opacity = '0';
+    splash.style.transform = 'scale(1.05)';
+    setTimeout(() => { splash.style.display = 'none'; }, 600);
+  }, 1900); // Display for roughly ~2 seconds before disappearing
+});
+
+// Safe DOM initialization call hook
+document.addEventListener('DOMContentLoaded', () => {
+  initMap();
+});
 </script>
 </body>
 </html>
